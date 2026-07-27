@@ -30,6 +30,8 @@ import shotAiContent from '../assets/crm-ai-content.png';
 import heroAscii from '../assets/hero-ascii.txt?raw';
 import johnCrmLogo from '../assets/johncrm.svg';
 
+const heroAsciiWithoutBackgroundDots = heroAscii.replaceAll('.', ' ');
+
 /* ---------------------------------- hooks --------------------------------- */
 
 const prefersReducedMotion = () =>
@@ -292,13 +294,13 @@ function HeroMockup() {
       <pre
         role="img"
         aria-label="ASCII art salesman holding a briefcase"
-        className="m-0 w-max max-w-none whitespace-pre text-left text-[clamp(5px,0.55vw,7px)] leading-none tracking-normal text-black/75"
+        className="relative -translate-y-10 m-0 w-max max-w-none whitespace-pre text-left text-[clamp(5.5px,1.6vw,6.5px)] leading-none tracking-normal text-[#2A88AA] lg:-translate-y-14 lg:text-[clamp(7px,0.75vw,10px)]"
         style={{
           fontFamily:
             'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
         }}
       >
-        {heroAscii}
+        {heroAsciiWithoutBackgroundDots}
       </pre>
     </div>
   );

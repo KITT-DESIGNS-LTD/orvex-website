@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { access, readFile } from 'node:fs/promises';
 import test from 'node:test';
 
-test('hero renders the supplied ASCII salesman art in its right column', async () => {
+test('hero renders a larger blue ASCII salesman without the dot-field background', async () => {
   const assetUrl = new URL('../src/assets/hero-ascii.txt', import.meta.url);
   const assetExists = await access(assetUrl).then(
     () => true,
@@ -19,9 +19,18 @@ test('hero renders the supplied ASCII salesman art in its right column', async (
   assert.ok(asciiArt.includes('\n'), 'expected multiline ASCII art');
   assert.match(asciiArt, /[@#%]/, 'expected detailed ASCII characters');
   assert.match(source, /import heroAscii from '\.\.\/assets\/hero-ascii\.txt\?raw';/);
+  assert.match(
+    source,
+    /const heroAsciiWithoutBackgroundDots = heroAscii\.replaceAll\('\.', ' '\);/,
+  );
   assert.match(heroVisual, /<pre[\s\S]*?role="img"/);
   assert.match(heroVisual, /aria-label="ASCII art salesman holding a briefcase"/);
-  assert.match(heroVisual, /\{heroAscii\}/);
+  assert.match(heroVisual, /\{heroAsciiWithoutBackgroundDots\}/);
   assert.match(heroVisual, /whitespace-pre/);
+  assert.match(heroVisual, /text-\[#2A88AA\]/);
+  assert.match(heroVisual, /lg:text-\[clamp\(7px,0\.75vw,10px\)\]/);
+  assert.match(heroVisual, /-translate-y-10/);
+  assert.match(heroVisual, /lg:-translate-y-14/);
+  assert.doesNotMatch(heroVisual, /\{heroAscii\}/);
   assert.doesNotMatch(heroVisual, /heroSalesman/);
 });
