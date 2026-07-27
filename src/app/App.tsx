@@ -27,6 +27,7 @@ import shotPipeline from '../assets/crm-pipeline.png';
 import shotClients from '../assets/crm-clients.png';
 import shotChat from '../assets/crm-chat.png';
 import shotAiContent from '../assets/crm-ai-content.png';
+import johnCrmLogo from '../assets/johncrm.svg';
 
 /* ---------------------------------- hooks --------------------------------- */
 
@@ -168,12 +169,7 @@ function LoadingScreen({ onDone }: { onDone: () => void }) {
       }`}
       style={GRID_BG}
     >
-      <div className="font-display font-black uppercase leading-none text-[#0C0C0C] text-[clamp(4rem,12vw,8rem)]">
-        ORVEX
-      </div>
-      <div className="mt-2 font-mono text-[10px] tracking-[0.5em] uppercase text-black/30">
-        Content Relation Manager
-      </div>
+      <img src={johnCrmLogo} alt="JOHN CRM" className="w-[min(23.125rem,78vw)]" />
       <div className="mt-10 h-px w-40 bg-black/8">
         <div
           className="h-px bg-black transition-all ease-linear"
@@ -223,13 +219,8 @@ function Nav() {
       }`}
     >
       <div className="mx-auto flex h-full max-w-7xl items-center justify-between px-6 lg:px-10">
-        <a href="#top" className="flex items-baseline gap-2">
-          <span className="font-display text-2xl font-black uppercase tracking-tight">
-            ORVEX
-          </span>
-          <span className="font-mono text-[9px] tracking-[0.35em] uppercase text-black/35">
-            CRM
-          </span>
+        <a href="#top" className="flex items-center" aria-label="JOHN CRM home">
+          <img src={johnCrmLogo} alt="JOHN CRM" className="h-5 w-auto shrink-0" />
         </a>
 
         <nav className="hidden items-center gap-10 md:flex">
@@ -237,7 +228,7 @@ function Nav() {
             <a
               key={l.label}
               href={l.href}
-              className="font-mono text-[10px] tracking-[0.25em] uppercase text-black/45 transition-colors hover:text-black"
+              className="font-mono text-[11px] tracking-[0.25em] uppercase text-black/45 transition-colors hover:text-black"
             >
               {l.label}
             </a>
@@ -247,15 +238,21 @@ function Nav() {
         <div className="hidden items-center gap-6 md:flex">
           <a
             href="#contact"
-            className="font-mono text-[10px] tracking-[0.25em] uppercase text-black/60 transition-colors hover:text-black"
+            className="font-mono text-[11px] tracking-[0.25em] uppercase text-black/60 transition-colors hover:text-black"
           >
-            Book a Demo
+            Contact Sales
+          </a>
+          <a
+            href="https://app.orvex.live/g/login"
+            className="font-mono text-[11px] tracking-[0.25em] uppercase text-black/60 transition-colors hover:text-black"
+          >
+            Login
           </a>
           <a
             href="#pricing"
-            className="bg-black px-5 py-2.5 font-mono text-[10px] tracking-[0.25em] uppercase text-white transition-opacity hover:opacity-80"
+            className="bg-black px-5 py-2.5 font-mono text-[11px] tracking-[0.25em] uppercase text-white transition-opacity hover:opacity-80"
           >
-            Get Started
+            Try for Free
           </a>
         </div>
 
@@ -282,11 +279,25 @@ function Nav() {
               </a>
             ))}
             <a
+              href="#contact"
+              onClick={() => setOpen(false)}
+              className="border-b border-black/5 py-4 font-mono text-[11px] tracking-[0.25em] uppercase text-black/60"
+            >
+              Contact Sales
+            </a>
+            <a
+              href="https://app.orvex.live/g/login"
+              onClick={() => setOpen(false)}
+              className="border-b border-black/5 py-4 font-mono text-[11px] tracking-[0.25em] uppercase text-black/60"
+            >
+              Login
+            </a>
+            <a
               href="#pricing"
               onClick={() => setOpen(false)}
               className="mt-6 bg-black px-5 py-4 text-center font-mono text-[11px] tracking-[0.25em] uppercase text-white"
             >
-              Get Started
+              Try for Free
             </a>
           </div>
         </div>
@@ -352,15 +363,6 @@ function HeroStat({
   );
 }
 
-const TRUST_COMPANIES = [
-  'Summit Solutions',
-  'ECME',
-  'BrightLabs',
-  'Vertex Global',
-  'Northline',
-  'Pioneer Group',
-];
-
 function Hero() {
   const [statsRef, statsInView] = useInView<HTMLDivElement>(0.15);
 
@@ -370,18 +372,9 @@ function Hero() {
         <div className="grid items-center gap-14 lg:grid-cols-2 lg:gap-10">
           {/* left */}
           <div>
-            <Reveal>
-              <div className="inline-flex items-center gap-2.5 border border-black/8 bg-white px-4 py-2">
-                <span className="h-1.5 w-1.5 rounded-full bg-black" />
-                <span className="font-mono text-[9px] tracking-[0.25em] uppercase text-black/50">
-                  AI-Powered CRM &amp; Sales Automation
-                </span>
-              </div>
-            </Reveal>
-
             <Reveal delay={100}>
               <h1
-                className="mt-8 font-display font-black uppercase leading-[0.88] tracking-tight"
+                className="font-display font-extrabold uppercase leading-[0.88] tracking-tight"
                 style={{ fontSize: 'clamp(3.75rem, 8.5vw, 7rem)' }}
               >
                 Your
@@ -396,9 +389,8 @@ function Hero() {
 
             <Reveal delay={200}>
               <p className="mt-8 max-w-[22rem] text-[15px] leading-relaxed text-black/55">
-                Every customer conversation in one inbox — WhatsApp, WeChat,
-                email, web chat. AI drafts the reply, you approve, it sends.
-                Smarter follow-ups. Happier clients. More revenue.
+                #1 AI Agent Platform for Automating messages. Manage your
+                site, WhatsApp, WeChat, email and more in one place.
               </p>
             </Reveal>
 
@@ -443,25 +435,6 @@ function Hero() {
             <HeroStat key={s.label} stat={s} active={statsInView} />
           ))}
         </div>
-
-        {/* trust strip */}
-        <Reveal className="mt-20">
-          <div className="flex flex-col items-start gap-8 border-t border-black/6 pt-10 lg:flex-row lg:items-center lg:gap-14">
-            <div className="font-mono text-[9px] tracking-[0.25em] uppercase text-black/30">
-              Trusted by growing companies
-            </div>
-            <div className="flex flex-wrap items-center gap-x-10 gap-y-4">
-              {TRUST_COMPANIES.map((c) => (
-                <span
-                  key={c}
-                  className="font-display text-xs font-bold uppercase tracking-[0.2em] text-black/35"
-                >
-                  {c}
-                </span>
-              ))}
-            </div>
-          </div>
-        </Reveal>
       </div>
     </section>
   );
@@ -1183,12 +1156,7 @@ function Footer() {
   return (
     <footer className="border-t border-black/6 bg-[#F8F8F6]">
       <div className="mx-auto flex max-w-7xl flex-col items-start justify-between gap-8 px-6 py-14 md:flex-row md:items-center lg:px-10">
-        <div className="flex items-baseline gap-2">
-          <span className="font-display text-xl font-black uppercase">ORVEX</span>
-          <span className="font-mono text-[9px] tracking-[0.35em] uppercase text-black/30">
-            CRM
-          </span>
-        </div>
+        <img src={johnCrmLogo} alt="JOHN CRM" className="h-5 w-auto" />
         <nav className="flex flex-wrap gap-x-8 gap-y-3">
           {FOOTER_LINKS.map((l) => (
             <a
