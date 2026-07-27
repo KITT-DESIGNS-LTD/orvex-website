@@ -887,8 +887,8 @@ type Plan = {
 const PLANS: Plan[] = [
   {
     name: 'Starter',
-    monthly: 59,
-    annual: 49,
+    monthly: 349,
+    annual: 299,
     blurb: 'For small teams getting their first pipeline in order.',
     features: [
       'Up to 1,000 contacts',
@@ -902,8 +902,8 @@ const PLANS: Plan[] = [
   },
   {
     name: 'Growth',
-    monthly: 179,
-    annual: 149,
+    monthly: 479,
+    annual: 399,
     blurb: 'For teams ready to put follow-up on autopilot.',
     features: [
       'Everything in Starter',
