@@ -28,6 +28,6 @@ test('hero capability strip presents the five approved product capabilities', ()
 test('hero capability strip uses five wide columns and readable support labels', () => {
   assert.ok(appSource.includes('lg:grid-cols-5'));
   assert.ok(
-    statsSource.includes('text-[11px] tracking-[0.14em] uppercase text-black/45 lg:text-xs'),
+    statsSource.includes('text-xs tracking-[0.12em] uppercase text-black/55 lg:text-sm'),
   );
 });

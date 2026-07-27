@@ -18,7 +18,7 @@ The hero strip will show five markers:
 
 The strip remains below the hero content, retains its grid, top divider, reveal animation, and monochrome visual language. On wide screens it uses five evenly sized columns; on smaller screens it wraps into the existing compact grid.
 
-Each primary capability remains visually dominant, but scales responsively so `Embed Anywhere` fits naturally in its column. Supporting labels use at least 11px type, less letter spacing, and a darker neutral tone than the current 9px labels so they remain readable without competing with the primary line.
+Each primary capability remains visually dominant, but scales responsively so `Embed Anywhere` fits naturally in its column. Supporting labels use 12px type on smaller screens and 14px on wide screens, with less letter spacing and a darker neutral tone than the current 9px labels so they remain readable without competing with the primary line.
 
 ## Scope and verification
 

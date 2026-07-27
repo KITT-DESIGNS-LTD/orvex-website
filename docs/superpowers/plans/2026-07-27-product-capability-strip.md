@@ -42,7 +42,7 @@ test('hero capability strip presents the five approved product capabilities', ()
 
 test('hero capability strip uses five wide columns and readable support labels', () => {
   assert.ok(appSource.includes('lg:grid-cols-5'));
-  assert.ok(statsSource.includes('text-[11px] tracking-[0.14em] uppercase text-black/45 lg:text-xs'));
+  assert.ok(statsSource.includes('text-xs tracking-[0.12em] uppercase text-black/55 lg:text-sm'));
 });
 ```
 
@@ -77,7 +77,7 @@ function HeroStat({ stat }: { stat: (typeof HERO_STATS)[number] }) {
       <div className="font-display text-[clamp(1.75rem,2.35vw,3rem)] font-black leading-none">
         {stat.value}
       </div>
-      <div className="mt-2 font-mono text-[11px] tracking-[0.14em] uppercase text-black/45 lg:text-xs">
+      <div className="mt-2 font-mono text-xs tracking-[0.12em] uppercase text-black/55 lg:text-sm">
         {stat.label}
       </div>
     </div>
