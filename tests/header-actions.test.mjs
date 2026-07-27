@@ -12,7 +12,7 @@ const navSource = appSource.slice(
 test('header offers contact sales, a free trial, and external login', () => {
   assert.match(navSource, />\s*Contact Sales\s*</);
   assert.match(navSource, />\s*Try for Free\s*</);
-  assert.match(navSource, /href="https:\/\/app\.johncrm\.live\/g\/login"/);
+  assert.match(navSource, /href="https:\/\/app\.johncrm\.com\/"/);
   assert.match(navSource, />\s*Login\s*</);
 });
 
@@ -24,7 +24,7 @@ test('desktop header places login before the far-right free trial action', () =>
 
   assert.match(
     desktopActions,
-    /Contact Sales\s*<\/a>\s*<a\s+href="https:\/\/app\.johncrm\.live\/g\/login"[\s\S]*?>\s*Login\s*<\/a>\s*<a\s+href="#pricing"[\s\S]*?>\s*Try for Free\s*<\/a>/,
+    /Contact Sales\s*<\/a>\s*<a\s+href="https:\/\/app\.johncrm\.com\/"[\s\S]*?>\s*Login\s*<\/a>\s*<a\s+href="#pricing"[\s\S]*?>\s*Try for Free\s*<\/a>/,
   );
 });
 

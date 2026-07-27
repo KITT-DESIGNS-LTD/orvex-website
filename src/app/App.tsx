@@ -233,7 +233,7 @@ function Nav() {
             Contact Sales
           </a>
           <a
-            href="https://app.johncrm.live/g/login"
+            href="https://app.johncrm.com/"
             className="font-mono text-[11px] tracking-[0.25em] uppercase text-black/60 transition-colors hover:text-black"
           >
             Login
@@ -276,7 +276,7 @@ function Nav() {
               Contact Sales
             </a>
             <a
-              href="https://app.johncrm.live/g/login"
+              href="https://app.johncrm.com/"
               onClick={() => setOpen(false)}
               className="border-b border-black/5 py-4 font-mono text-[11px] tracking-[0.25em] uppercase text-black/60"
             >
@@ -416,7 +416,7 @@ function Hero() {
                 className="font-display font-extrabold uppercase leading-[0.88] tracking-tight"
                 style={{ fontSize: 'clamp(3.75rem, 8.5vw, 7rem)' }}
               >
-                Your
+                THE
                 <br />
                 Assistant
                 <br />
