@@ -27,6 +27,7 @@ import shotPipeline from '../assets/crm-pipeline.png';
 import shotClients from '../assets/crm-clients.png';
 import shotChat from '../assets/crm-chat.png';
 import shotAiContent from '../assets/crm-ai-content.png';
+import heroSalesman from '../assets/john-salesman.png';
 import johnCrmLogo from '../assets/johncrm.svg';
 
 /* ---------------------------------- hooks --------------------------------- */
@@ -60,29 +61,6 @@ function useInView<T extends HTMLElement>(threshold = 0.1) {
   }, [threshold]);
 
   return [ref, inView] as const;
-}
-
-function useCountUp(target: number, active: boolean, duration = 1400) {
-  const [value, setValue] = useState(0);
-
-  useEffect(() => {
-    if (!active) return;
-    if (prefersReducedMotion()) {
-      setValue(target);
-      return;
-    }
-    const steps = Math.max(1, Math.round(duration / 16));
-    let tick = 0;
-    const id = setInterval(() => {
-      tick += 1;
-      const t = Math.min(1, tick / steps);
-      setValue(target * t);
-      if (t >= 1) clearInterval(id);
-    }, 16);
-    return () => clearInterval(id);
-  }, [active, target, duration]);
-
-  return value;
 }
 
 /* ------------------------------- primitives ------------------------------- */
@@ -218,7 +196,7 @@ function Nav() {
           : 'bg-transparent border-b border-transparent'
       }`}
     >
-      <div className="mx-auto flex h-full max-w-7xl items-center justify-between px-6 lg:px-10">
+      <div className="mx-auto flex h-full max-w-[85rem] items-center justify-between px-6 lg:px-10">
         <a href="#top" className="flex items-center" aria-label="JOHN CRM home">
           <img src={johnCrmLogo} alt="JOHN CRM" className="h-5 w-auto shrink-0" />
         </a>
@@ -310,53 +288,31 @@ function Nav() {
 
 function HeroMockup() {
   return (
-    <div className="relative border border-black/8 bg-white shadow-[0_8px_60px_rgba(0,0,0,0.06)]">
-      <CornerBrackets />
-
-      {/* browser chrome */}
-      <div className="flex items-center gap-3 border-b border-black/6 bg-[#F4F4F2] px-4 py-2.5">
-        <div className="flex gap-1.5">
-          {[0, 1, 2].map((i) => (
-            <span key={i} className="h-2 w-2 rounded-full bg-black/12" />
-          ))}
-        </div>
-        <div className="flex-1 border border-black/6 bg-white px-3 py-1 font-mono text-[9px] tracking-wider text-black/35">
-          app.orvex.io/dashboard
-        </div>
-      </div>
-
+    <div className="relative mx-auto flex h-[26rem] max-w-md items-center justify-center sm:h-[30rem] lg:h-[clamp(30rem,42vw,34rem)] lg:max-w-xl">
       <img
-        src={shotDashboard}
-        alt="ORVEX CRM dashboard — AI activity feed and engagement overview"
-        className="block w-full"
+        src={heroSalesman}
+        alt="John CRM salesman holding a briefcase"
+        className="h-full w-full object-contain drop-shadow-[0_24px_24px_rgba(0,0,0,0.24)]"
       />
     </div>
   );
 }
 
 const HERO_STATS = [
-  { prefix: '', target: 2.5, decimals: 1, suffix: 'M+', label: 'Leads Managed' },
-  { prefix: '< ', target: 2, decimals: 0, suffix: ' min', label: 'Avg Response' },
-  { prefix: '', target: 38, decimals: 0, suffix: '%', label: 'Conversion Increase' },
-  { prefix: '$', target: 28, decimals: 0, suffix: 'M+', label: 'Revenue Generated' },
+  { value: '< 0 min', label: 'Avg Response' },
+  { value: 'WhatsApp', label: 'Support' },
+  { value: 'Custom API', label: 'Endpoints' },
+  { value: 'Automate', label: 'Meetings' },
+  { value: 'Embed Anywhere', label: 'Website & platform ready' },
 ];
 
-function HeroStat({
-  stat,
-  active,
-}: {
-  stat: (typeof HERO_STATS)[number];
-  active: boolean;
-}) {
-  const value = useCountUp(stat.target, active);
+function HeroStat({ stat }: { stat: (typeof HERO_STATS)[number] }) {
   return (
     <div>
-      <div className="font-display text-4xl font-black leading-none lg:text-5xl">
-        {stat.prefix}
-        {value.toFixed(stat.decimals)}
-        {stat.suffix}
+      <div className="font-display text-[clamp(1.75rem,2.35vw,3rem)] font-black leading-none">
+        {stat.value}
       </div>
-      <div className="mt-2 font-mono text-[9px] tracking-[0.25em] uppercase text-black/30">
+      <div className="mt-2 font-mono text-[11px] tracking-[0.14em] uppercase text-black/45 lg:text-xs">
         {stat.label}
       </div>
     </div>
@@ -368,7 +324,7 @@ function Hero() {
 
   return (
     <section id="top" className="relative min-h-screen bg-[#F8F8F6] pt-16" style={GRID_BG}>
-      <div className="mx-auto max-w-7xl px-6 pb-16 pt-14 lg:px-10 lg:pt-16">
+      <div className="mx-auto max-w-[85rem] px-6 pb-16 pt-14 lg:px-10 lg:pt-16">
         <div className="grid items-center gap-14 lg:grid-cols-2 lg:gap-10">
           {/* left */}
           <div>
@@ -427,12 +383,12 @@ function Hero() {
         {/* stats bar */}
         <div
           ref={statsRef}
-          className={`mt-24 grid grid-cols-2 gap-10 border-t border-black/6 pt-12 transition-all duration-700 lg:grid-cols-4 ${
+          className={`mt-24 grid grid-cols-2 gap-10 border-t border-black/6 pt-12 transition-all duration-700 lg:grid-cols-5 ${
             statsInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
           }`}
         >
           {HERO_STATS.map((s) => (
-            <HeroStat key={s.label} stat={s} active={statsInView} />
+            <HeroStat key={s.label} stat={s} />
           ))}
         </div>
       </div>
@@ -478,7 +434,7 @@ const FEATURES = [
 function Features() {
   return (
     <section id="features" className="bg-white py-32">
-      <div className="mx-auto max-w-7xl px-6 lg:px-10">
+      <div className="mx-auto max-w-[85rem] px-6 lg:px-10">
         <Reveal>
           <div className="flex flex-wrap items-end justify-between gap-8">
             <div>
@@ -663,7 +619,7 @@ function Showcase() {
   return (
     <section id="showcase" ref={wrapRef} style={{ height: `${n * 100}vh` }} className="bg-[#F8F8F6]">
       <div className="sticky top-0 flex h-screen flex-col overflow-hidden px-6 pb-8 pt-24 lg:px-10">
-        <div className="mx-auto flex w-full max-w-7xl flex-1 flex-col">
+        <div className="mx-auto flex w-full max-w-[85rem] flex-1 flex-col">
           {/* header */}
           <div className="mb-6 flex flex-wrap items-end justify-between gap-6">
             <div>
@@ -795,7 +751,7 @@ function TickMarks() {
 function Reviews() {
   return (
     <section id="clients" className="bg-white py-32">
-      <div className="mx-auto max-w-7xl px-6 lg:px-10">
+      <div className="mx-auto max-w-[85rem] px-6 lg:px-10">
         <Reveal>
           <SectionLabel>03 — Clients</SectionLabel>
           <h2 className="mt-4 font-display text-6xl font-black uppercase leading-[0.9] lg:text-7xl">
@@ -900,7 +856,7 @@ function Pricing() {
 
   return (
     <section id="pricing" className="bg-[#F8F8F6] py-32">
-      <div className="mx-auto max-w-7xl px-6 lg:px-10">
+      <div className="mx-auto max-w-[85rem] px-6 lg:px-10">
         <Reveal>
           <SectionLabel>04 — Pricing</SectionLabel>
           <h2 className="mt-4 font-display text-6xl font-black uppercase leading-[0.9] lg:text-7xl">
@@ -1031,7 +987,7 @@ function Contact() {
 
   return (
     <section id="contact" className="bg-white py-32">
-      <div className="mx-auto max-w-7xl px-6 lg:px-10">
+      <div className="mx-auto max-w-[85rem] px-6 lg:px-10">
         <div className="grid gap-16 lg:grid-cols-[2fr_3fr] lg:gap-14">
           <Reveal>
             <SectionLabel>05 — Contact</SectionLabel>
@@ -1155,7 +1111,7 @@ const FOOTER_LINKS = ['Privacy', 'Terms', 'Security', 'Status', 'Documentation']
 function Footer() {
   return (
     <footer className="border-t border-black/6 bg-[#F8F8F6]">
-      <div className="mx-auto flex max-w-7xl flex-col items-start justify-between gap-8 px-6 py-14 md:flex-row md:items-center lg:px-10">
+      <div className="mx-auto flex max-w-[85rem] flex-col items-start justify-between gap-8 px-6 py-14 md:flex-row md:items-center lg:px-10">
         <img src={johnCrmLogo} alt="JOHN CRM" className="h-5 w-auto" />
         <nav className="flex flex-wrap gap-x-8 gap-y-3">
           {FOOTER_LINKS.map((l) => (
