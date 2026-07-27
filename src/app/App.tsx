@@ -27,7 +27,7 @@ import shotPipeline from '../assets/crm-pipeline.png';
 import shotClients from '../assets/crm-clients.png';
 import shotChat from '../assets/crm-chat.png';
 import shotAiContent from '../assets/crm-ai-content.png';
-import heroSalesman from '../assets/john-salesman.png';
+import heroAscii from '../assets/hero-ascii.txt?raw';
 import johnCrmLogo from '../assets/johncrm.svg';
 
 /* ---------------------------------- hooks --------------------------------- */
@@ -288,12 +288,18 @@ function Nav() {
 
 function HeroMockup() {
   return (
-    <div className="relative mx-auto flex h-[26rem] max-w-md items-center justify-center sm:h-[30rem] lg:h-[clamp(30rem,42vw,34rem)] lg:max-w-xl">
-      <img
-        src={heroSalesman}
-        alt="John CRM salesman holding a briefcase"
-        className="h-full w-full object-contain drop-shadow-[0_24px_24px_rgba(0,0,0,0.24)]"
-      />
+    <div className="relative mx-auto flex max-w-full justify-center overflow-hidden">
+      <pre
+        role="img"
+        aria-label="ASCII art salesman holding a briefcase"
+        className="m-0 w-max max-w-none whitespace-pre text-left text-[clamp(5px,0.55vw,7px)] leading-none tracking-normal text-black/75"
+        style={{
+          fontFamily:
+            'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
+        }}
+      >
+        {heroAscii}
+      </pre>
     </div>
   );
 }
