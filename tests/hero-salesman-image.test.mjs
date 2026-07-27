@@ -34,3 +34,28 @@ test('hero renders a larger blue ASCII salesman without the dot-field background
   assert.doesNotMatch(heroVisual, /\{heroAscii\}/);
   assert.doesNotMatch(heroVisual, /heroSalesman/);
 });
+
+test('hero ASCII art scrambles in a cursor-sized circle while retaining its blue color', async () => {
+  const source = await readFile(new URL('../src/app/App.tsx', import.meta.url), 'utf8');
+  const heroVisual = source.slice(
+    source.indexOf('function HeroMockup()'),
+    source.indexOf('const HERO_STATS'),
+  );
+
+  assert.match(source, /const HERO_ASCII_HOVER_GLYPHS = /);
+  assert.match(source, /const HERO_ASCII_SCRAMBLE_RADIUS = 72;/);
+  assert.doesNotMatch(source, /HERO_ASCII_COLOR_BLEND_RADIUS/);
+  assert.match(source, /function createHeroAsciiHoverFrame\(/);
+  assert.match(heroVisual, /onPointerEnter=\{handleAsciiPointerEnter\}/);
+  assert.match(heroVisual, /onPointerMove=\{updateAsciiPointer\}/);
+  assert.match(heroVisual, /onPointerLeave=\{\(\) => setAsciiHovered\(false\)\}/);
+  assert.match(heroVisual, /onFocus=\{handleAsciiFocus\}/);
+  assert.match(heroVisual, /onBlur=\{\(\) => setAsciiHovered\(false\)\}/);
+  assert.doesNotMatch(heroVisual, /backgroundImage: colorBlend/);
+  assert.match(heroVisual, /WebkitMaskImage/);
+  assert.match(heroVisual, /pointer-events-none/);
+  assert.match(heroVisual, /aria-hidden/);
+  assert.match(heroVisual, /text-\[#2A88AA\]/);
+  assert.match(heroVisual, /cursor-crosshair/);
+  assert.doesNotMatch(heroVisual, /asciiHovered \? 'text-\[#FD4658\]'/);
+});

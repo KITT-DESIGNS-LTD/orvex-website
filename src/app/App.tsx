@@ -31,6 +31,16 @@ import heroAscii from '../assets/hero-ascii.txt?raw';
 import johnCrmLogo from '../assets/johncrm.svg';
 
 const heroAsciiWithoutBackgroundDots = heroAscii.replaceAll('.', ' ');
+const HERO_ASCII_HOVER_GLYPHS = '@#%*+=-<>/\\';
+const HERO_ASCII_SCRAMBLE_RADIUS = 72;
+
+function createHeroAsciiHoverFrame(frame: number) {
+  return heroAsciiWithoutBackgroundDots.replace(/\S/g, (character, index) =>
+    (index + frame * 11) % 19 === 0
+      ? HERO_ASCII_HOVER_GLYPHS[(index * 7 + frame * 13) % HERO_ASCII_HOVER_GLYPHS.length]
+      : character,
+  );
+}
 
 /* ---------------------------------- hooks --------------------------------- */
 
@@ -223,7 +233,7 @@ function Nav() {
             Contact Sales
           </a>
           <a
-            href="https://app.orvex.live/g/login"
+            href="https://app.johncrm.live/g/login"
             className="font-mono text-[11px] tracking-[0.25em] uppercase text-black/60 transition-colors hover:text-black"
           >
             Login
@@ -266,7 +276,7 @@ function Nav() {
               Contact Sales
             </a>
             <a
-              href="https://app.orvex.live/g/login"
+              href="https://app.johncrm.live/g/login"
               onClick={() => setOpen(false)}
               className="border-b border-black/5 py-4 font-mono text-[11px] tracking-[0.25em] uppercase text-black/60"
             >
@@ -289,29 +299,94 @@ function Nav() {
 /* ----------------------------- hero + dashboard ---------------------------- */
 
 function HeroMockup() {
+  const asciiArtRef = useRef<HTMLPreElement>(null);
+  const [asciiHovered, setAsciiHovered] = useState(false);
+  const [asciiHoverFrame, setAsciiHoverFrame] = useState(0);
+  const [asciiPointer, setAsciiPointer] = useState({ x: 0, y: 0 });
+  const shouldScrambleAscii = asciiHovered && !prefersReducedMotion();
+
+  const updateAsciiPointer = (event: React.PointerEvent<HTMLPreElement>) => {
+    const bounds = event.currentTarget.getBoundingClientRect();
+    setAsciiPointer({
+      x: event.clientX - bounds.left,
+      y: event.clientY - bounds.top,
+    });
+  };
+
+  const handleAsciiPointerEnter = (event: React.PointerEvent<HTMLPreElement>) => {
+    updateAsciiPointer(event);
+    setAsciiHovered(true);
+  };
+
+  const handleAsciiFocus = () => {
+    const bounds = asciiArtRef.current?.getBoundingClientRect();
+    if (bounds) {
+      setAsciiPointer({ x: bounds.width / 2, y: bounds.height / 2 });
+    }
+    setAsciiHovered(true);
+  };
+
+  useEffect(() => {
+    if (!shouldScrambleAscii) {
+      setAsciiHoverFrame(0);
+      return;
+    }
+
+    const interval = window.setInterval(() => {
+      setAsciiHoverFrame((frame) => (frame + 1) % 8);
+    }, 80);
+    return () => window.clearInterval(interval);
+  }, [shouldScrambleAscii]);
+
+  const scrambleMask = `radial-gradient(circle ${HERO_ASCII_SCRAMBLE_RADIUS}px at ${asciiPointer.x}px ${asciiPointer.y}px, black 0%, black 52%, transparent 100%)`;
+  const asciiFont =
+    'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace';
+
   return (
     <div className="relative mx-auto flex max-w-full justify-center overflow-hidden">
-      <pre
-        role="img"
-        aria-label="ASCII art salesman holding a briefcase"
-        className="relative -translate-y-10 m-0 w-max max-w-none whitespace-pre text-left text-[clamp(5.5px,1.6vw,6.5px)] leading-none tracking-normal text-[#2A88AA] lg:-translate-y-14 lg:text-[clamp(7px,0.75vw,10px)]"
-        style={{
-          fontFamily:
-            'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
-        }}
-      >
-        {heroAsciiWithoutBackgroundDots}
-      </pre>
+      <div className="relative -translate-y-10 w-max max-w-none lg:-translate-y-14">
+        <pre
+          ref={asciiArtRef}
+          role="img"
+          aria-label="ASCII art salesman holding a briefcase"
+          aria-description="Hover or focus the artwork to scan a small circle of scrambled characters."
+          tabIndex={0}
+          onPointerEnter={handleAsciiPointerEnter}
+          onPointerMove={updateAsciiPointer}
+          onPointerLeave={() => setAsciiHovered(false)}
+          onFocus={handleAsciiFocus}
+          onBlur={() => setAsciiHovered(false)}
+          className="m-0 w-max max-w-none cursor-crosshair whitespace-pre text-left text-[clamp(5.5px,1.6vw,6.5px)] leading-none tracking-normal text-[#2A88AA] focus-visible:outline focus-visible:outline-1 focus-visible:outline-[#2A88AA]/50 focus-visible:outline-offset-4 lg:text-[clamp(7px,0.75vw,10px)]"
+          style={{
+            fontFamily: asciiFont,
+          }}
+        >
+          {heroAsciiWithoutBackgroundDots}
+        </pre>
+        {shouldScrambleAscii && (
+          <pre
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0 m-0 w-full max-w-none whitespace-pre text-left text-[clamp(5.5px,1.6vw,6.5px)] leading-none tracking-normal text-[#2A88AA] lg:text-[clamp(7px,0.75vw,10px)]"
+            style={{
+              fontFamily: asciiFont,
+              maskImage: scrambleMask,
+              WebkitMaskImage: scrambleMask,
+            }}
+          >
+            {createHeroAsciiHoverFrame(asciiHoverFrame)}
+          </pre>
+        )}
+      </div>
     </div>
   );
 }
 
 const HERO_STATS = [
+  { value: 'Embed Anywhere', label: 'WEBSITE & APP READY' },
   { value: '< 0 min', label: 'Avg Response' },
-  { value: 'WhatsApp', label: 'Support' },
+  { value: 'Automate', label: 'Appointments' },
   { value: 'Custom API', label: 'Endpoints' },
-  { value: 'Automate', label: 'Meetings' },
-  { value: 'Embed Anywhere', label: 'Website & platform ready' },
+  { value: 'Google Integrations', label: 'Calendar & Meets' },
 ];
 
 function HeroStat({ stat }: { stat: (typeof HERO_STATS)[number] }) {
@@ -343,7 +418,7 @@ function Hero() {
               >
                 Your
                 <br />
-                Salesman
+                Assistant
                 <br />
                 That Never
                 <br />
@@ -516,7 +591,7 @@ function Poster() {
       <Reveal delay={300}>
         <p className="mx-auto mt-10 max-w-md text-[15px] leading-relaxed text-white/50">
           Every conversation answered. Every deal tracked. Every number in one
-          place. ORVEX runs your revenue engine around the clock.
+          place. JOHN CRM runs your revenue engine around the clock.
         </p>
         <a
           href="#pricing"
@@ -550,46 +625,46 @@ const SCREENS: Screen[] = [
     key: 'dashboard',
     name: 'Dashboard',
     sub: 'Every metric that matters, on one screen the moment you log in.',
-    path: 'app.orvex.io/dashboard',
+    path: 'app.johncrm.io/dashboard',
     icon: LayoutDashboard,
     shot: shotDashboard,
-    alt: 'ORVEX dashboard with important messages, AI activity feed, and engagement chart',
+    alt: 'JOHN CRM dashboard with important messages, AI activity feed, and engagement chart',
   },
   {
     key: 'pipeline',
     name: 'Pipeline',
     sub: 'Drag clients through stages and watch the forecast update in real time.',
-    path: 'app.orvex.io/pipeline',
+    path: 'app.johncrm.io/pipeline',
     icon: BarChart3,
     shot: shotPipeline,
-    alt: 'ORVEX kanban sales pipeline with clients distributed across stages',
+    alt: 'JOHN CRM kanban sales pipeline with clients distributed across stages',
   },
   {
     key: 'clients',
     name: 'Clients',
     sub: 'A living database of every relationship, enriched automatically.',
-    path: 'app.orvex.io/clients',
+    path: 'app.johncrm.io/clients',
     icon: Users,
     shot: shotClients,
-    alt: 'ORVEX client list with tags, pipeline stage, and last-contact columns',
+    alt: 'JOHN CRM client list with tags, pipeline stage, and last-contact columns',
   },
   {
     key: 'inbox',
     name: 'AI Inbox',
     sub: 'WhatsApp, email, and web chat in one thread — AI replies on standby.',
-    path: 'app.orvex.io/chat',
+    path: 'app.johncrm.io/chat',
     icon: MessageCircle,
     shot: shotChat,
-    alt: 'ORVEX unified inbox showing a WhatsApp conversation with AI assist enabled',
+    alt: 'JOHN CRM unified inbox showing a WhatsApp conversation with AI assist enabled',
   },
   {
     key: 'campaigns',
     name: 'AI Campaigns',
     sub: 'AI writes a personalized draft for every client you select.',
-    path: 'app.orvex.io/ai-content',
+    path: 'app.johncrm.io/ai-content',
     icon: Bot,
     shot: shotAiContent,
-    alt: 'ORVEX AI campaign composer with client segments and draft preview',
+    alt: 'JOHN CRM AI campaign composer with client segments and draft preview',
   },
 ];
 
@@ -734,13 +809,13 @@ const REVIEWS = [
   },
   {
     quote:
-      'ORVEX follows up when my team forgets. That alone paid for the subscription in the first month — we closed two deals that would have gone cold.',
+      'JOHN CRM follows up when my team forgets. That alone paid for the subscription in the first month — we closed two deals that would have gone cold.',
     name: 'James Okafor',
     title: 'VP Sales, Nightline Corp',
   },
   {
     quote:
-      'Our clients write in Cantonese, English, and Mandarin. ORVEX drafts the reply in all three — my team just reviews and hits approve.',
+      'Our clients write in Cantonese, English, and Mandarin. JOHN CRM drafts the reply in all three — my team just reviews and hits approve.',
     name: 'Claire Beaumont',
     title: 'Managing Director, Propager',
   },
@@ -1007,7 +1082,7 @@ function Contact() {
               Revenue
             </h2>
             <p className="mt-8 max-w-sm text-[14px] leading-relaxed text-black/55">
-              Tell us about your team and we&apos;ll show you exactly how ORVEX
+              Tell us about your team and we&apos;ll show you exactly how JOHN CRM
               fits your pipeline. No slide decks — a live walkthrough on your
               own data.
             </p>
@@ -1133,7 +1208,7 @@ function Footer() {
           ))}
         </nav>
         <div className="font-mono text-[9px] tracking-[0.2em] uppercase text-black/35">
-          &copy; 2026 ORVEX Inc.
+          &copy; 2026 JOHN CRM Inc.
         </div>
       </div>
     </footer>
@@ -1144,10 +1219,10 @@ function Footer() {
 
 export default function App() {
   const [loading, setLoading] = useState(
-    () => !prefersReducedMotion() && sessionStorage.getItem('orvex-visited') !== '1',
+    () => !prefersReducedMotion() && sessionStorage.getItem('johncrm-visited') !== '1',
   );
   const handleDone = useCallback(() => {
-    sessionStorage.setItem('orvex-visited', '1');
+    sessionStorage.setItem('johncrm-visited', '1');
     setLoading(false);
   }, []);
 

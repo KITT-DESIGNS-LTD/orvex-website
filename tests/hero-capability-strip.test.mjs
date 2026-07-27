@@ -12,17 +12,33 @@ test('hero capability strip presents the five approved product capabilities', ()
   [
     '< 0 min',
     'Avg Response',
-    'WhatsApp',
-    'Support',
+    'Automate',
+    'Appointments',
     'Custom API',
     'Endpoints',
-    'Automate',
-    'Meetings',
+    'Google Integrations',
+    'Calendar & Meets',
     'Embed Anywhere',
-    'Website & platform ready',
+    'WEBSITE & APP READY',
   ].forEach((copy) => {
     assert.ok(statsSource.includes(copy), `expected hero strip to include ${copy}`);
   });
+});
+
+test('hero capability strip replaces WhatsApp support and meeting automation with the requested services', () => {
+  assert.match(statsSource, /\{ value: 'Automate', label: 'Appointments' \}/);
+  assert.match(statsSource, /\{ value: 'Google Integrations', label: 'Calendar & Meets' \}/);
+  assert.doesNotMatch(statsSource, /\{ value: 'WhatsApp', label: 'Support' \}/);
+  assert.doesNotMatch(statsSource, /\{ value: 'Automate', label: 'Meetings' \}/);
+});
+
+test('hero capability strip leads with Embed Anywhere and uses the requested readiness label', () => {
+  const valuesInOrder = [...statsSource.matchAll(/\{ value: '([^']+)', label: '([^']+)' \}/g)].map(
+    ([, value, label]) => ({ value, label }),
+  );
+
+  assert.equal(valuesInOrder[0]?.value, 'Embed Anywhere');
+  assert.equal(valuesInOrder[0]?.label, 'WEBSITE & APP READY');
 });
 
 test('hero capability strip uses five wide columns and readable support labels', () => {
