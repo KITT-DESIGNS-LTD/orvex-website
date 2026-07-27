@@ -25,37 +25,70 @@ test('hero renders a larger blue ASCII salesman without the dot-field background
   );
   assert.match(heroVisual, /<pre[\s\S]*?role="img"/);
   assert.match(heroVisual, /aria-label="ASCII art salesman holding a briefcase"/);
-  assert.match(heroVisual, /\{heroAsciiWithoutBackgroundDots\}/);
+  assert.match(
+    heroVisual,
+    /useAsciiTextBulge\(\s*heroAsciiWithoutBackgroundDots,?\s*\)/,
+    'expected the hook to receive the ASCII source',
+  );
+  assert.match(heroVisual, /\{children\}/, 'expected the pre to render the hook-built glyph spans');
   assert.match(heroVisual, /whitespace-pre/);
   assert.match(heroVisual, /text-\[#2A88AA\]/);
   assert.match(heroVisual, /lg:text-\[clamp\(7px,0\.75vw,10px\)\]/);
   assert.match(heroVisual, /-translate-y-10/);
   assert.match(heroVisual, /lg:-translate-y-14/);
-  assert.doesNotMatch(heroVisual, /\{heroAscii\}/);
+  assert.doesNotMatch(
+    heroVisual,
+    /\{heroAsciiWithoutBackgroundDots\}\s*<\/pre>/,
+    'the pre must render per-glyph spans, not the raw string',
+  );
+  assert.doesNotMatch(heroVisual, /<canvas/, 'the portrait must stay DOM text, not a canvas');
   assert.doesNotMatch(heroVisual, /heroSalesman/);
 });
 
-test('hero ASCII art scrambles in a cursor-sized circle while retaining its blue color', async () => {
+test('hero ASCII art magnifies under the cursor as a per-character text lens', async () => {
   const source = await readFile(new URL('../src/app/App.tsx', import.meta.url), 'utf8');
   const heroVisual = source.slice(
     source.indexOf('function HeroMockup()'),
     source.indexOf('const HERO_STATS'),
   );
+  const hook = await readFile(
+    new URL('../src/lib/useAsciiTextBulge.ts', import.meta.url),
+    'utf8',
+  );
+  const webglFilesGone = await Promise.all(
+    ['../src/lib/asciiBulgeRenderer.ts', '../src/lib/useAsciiBulge.ts'].map((p) =>
+      access(new URL(p, import.meta.url)).then(
+        () => false,
+        () => true,
+      ),
+    ),
+  );
 
-  assert.match(source, /const HERO_ASCII_HOVER_GLYPHS = /);
-  assert.match(source, /const HERO_ASCII_SCRAMBLE_RADIUS = 72;/);
-  assert.doesNotMatch(source, /HERO_ASCII_COLOR_BLEND_RADIUS/);
-  assert.match(source, /function createHeroAsciiHoverFrame\(/);
-  assert.match(heroVisual, /onPointerEnter=\{handleAsciiPointerEnter\}/);
-  assert.match(heroVisual, /onPointerMove=\{updateAsciiPointer\}/);
-  assert.match(heroVisual, /onPointerLeave=\{\(\) => setAsciiHovered\(false\)\}/);
-  assert.match(heroVisual, /onFocus=\{handleAsciiFocus\}/);
-  assert.match(heroVisual, /onBlur=\{\(\) => setAsciiHovered\(false\)\}/);
-  assert.doesNotMatch(heroVisual, /backgroundImage: colorBlend/);
-  assert.match(heroVisual, /WebkitMaskImage/);
-  assert.match(heroVisual, /pointer-events-none/);
-  assert.match(heroVisual, /aria-hidden/);
-  assert.match(heroVisual, /text-\[#2A88AA\]/);
+  assert.match(
+    source,
+    /import \{ prefersReducedMotion, useAsciiTextBulge \} from '\.\.\/lib\/useAsciiTextBulge';/,
+  );
+  assert.match(heroVisual, /data-radius="0\.18"/);
+  assert.match(heroVisual, /data-strength="0\.45"/);
   assert.match(heroVisual, /cursor-crosshair/);
-  assert.doesNotMatch(heroVisual, /asciiHovered \? 'text-\[#FD4658\]'/);
+  assert.match(heroVisual, /tabIndex=\{0\}/);
+
+  // The lens mechanics: per-glyph spans, cubic falloff, eased motion, gates.
+  assert.match(hook, /className: 'inline-block'/, 'expected one inline-block span per glyph');
+  assert.match(hook, /mask \* mask \* mask/, 'expected the cubic falloff from the spec');
+  assert.match(hook, /const MOUSE_LERP = 0\.08;/);
+  assert.match(hook, /const STRENGTH_LERP_IN = 0\.06;/);
+  assert.match(hook, /prefers-reduced-motion/, 'expected the reduced-motion gate');
+  assert.match(hook, /hover: hover/, 'expected the touch-device gate');
+  assert.match(hook, /style\.transform = ''/, 'expected transforms to clear on decay');
+
+  // Scramble-era and WebGL-era implementations must be fully gone.
+  assert.doesNotMatch(source, /HERO_ASCII_HOVER_GLYPHS/);
+  assert.doesNotMatch(source, /HERO_ASCII_SCRAMBLE_RADIUS/);
+  assert.doesNotMatch(source, /createHeroAsciiHoverFrame/);
+  assert.doesNotMatch(source, /useAsciiBulge\b/);
+  assert.ok(
+    webglFilesGone.every(Boolean),
+    'the superseded WebGL implementation files must be deleted',
+  );
 });
