@@ -1,11 +1,12 @@
 {
-  "name": "orvex-landing-page",
+  "name": "john-crm-landing-page",
   "private": true,
   "version": "0.1.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "postbuild": "node scripts/create-pages-fallback.mjs",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit"
   },
