@@ -5,7 +5,7 @@ import test from 'node:test';
 const appSource = await readFile(new URL('../src/app/App.tsx', import.meta.url), 'utf8');
 const statsSource = appSource.slice(
   appSource.indexOf('const HERO_STATS'),
-  appSource.indexOf('function Hero()', appSource.indexOf('const HERO_STATS')),
+  appSource.indexOf('function Hero(', appSource.indexOf('const HERO_STATS')),
 );
 
 test('hero capability strip presents the five approved product capabilities', () => {

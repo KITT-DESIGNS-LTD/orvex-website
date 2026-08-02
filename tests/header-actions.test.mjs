@@ -5,15 +5,18 @@ import test from 'node:test';
 const appSource = await readFile(new URL('../src/app/App.tsx', import.meta.url), 'utf8');
 const themeSource = await readFile(new URL('../src/styles/theme.css', import.meta.url), 'utf8');
 const navSource = appSource.slice(
-  appSource.indexOf('function Nav()'),
+  appSource.indexOf('function Nav('),
   appSource.indexOf('/* ----------------------------- hero + dashboard'),
 );
 
 test('header offers contact sales, a free trial, and external login', () => {
-  assert.match(navSource, />\s*Contact Sales\s*</);
-  assert.match(navSource, />\s*Try for Free\s*</);
+  assert.match(appSource, /contactSales: 'Contact Sales'/);
+  assert.match(appSource, /tryForFree: 'Try for Free'/);
   assert.match(navSource, /href="https:\/\/app\.johncrm\.com\/"/);
-  assert.match(navSource, />\s*Login\s*</);
+  assert.match(appSource, /login: 'Login'/);
+  assert.match(navSource, /\{copy\.actions\.contactSales\}/);
+  assert.match(navSource, /\{copy\.actions\.login\}/);
+  assert.match(navSource, /\{copy\.actions\.tryForFree\}/);
 });
 
 test('desktop header places login before the far-right free trial action', () => {
@@ -24,7 +27,7 @@ test('desktop header places login before the far-right free trial action', () =>
 
   assert.match(
     desktopActions,
-    /Contact Sales\s*<\/a>\s*<a\s+href="https:\/\/app\.johncrm\.com\/"[\s\S]*?>\s*Login\s*<\/a>\s*<a\s+href="#pricing"[\s\S]*?>\s*Try for Free\s*<\/a>/,
+    /\{copy\.actions\.contactSales\}[\s\S]*?<\/a>\s*<a\s+href="https:\/\/app\.johncrm\.com\/"[\s\S]*?>\s*\{copy\.actions\.login\}[\s\S]*?<\/a>\s*<a\s+href="#pricing"[\s\S]*?>\s*\{copy\.actions\.tryForFree\}/,
   );
 });
 
@@ -52,14 +55,16 @@ test('hero omits the AI-powered CRM and sales automation label', () => {
 });
 
 test('hero presents the AI agent platform message', () => {
-  const copyStart = appSource.indexOf('#1 AI Agent Platform');
-  const copyEnd = appSource.indexOf('</p>', copyStart);
-  const renderedCopy = appSource.slice(copyStart, copyEnd).replace(/\s+/g, ' ').trim();
-
-  assert.equal(
-    renderedCopy,
-    '#1 AI Agent Platform for Automating messages. Manage your site, WhatsApp, WeChat, email and more in one place.',
+  const heroSource = appSource.slice(
+    appSource.indexOf('function Hero('),
+    appSource.indexOf('/* --------------------------------- features'),
   );
+
+  assert.match(
+    appSource,
+    /description:\s*'#1 AI Agent Platform for Automating messages\. Manage your site, WhatsApp, WeChat, email and more in one place\.'/,
+  );
+  assert.match(heroSource, /\{copy\.hero\.description\}/);
   assert.doesNotMatch(appSource, /Every customer conversation in one inbox/);
 });
 
@@ -68,7 +73,7 @@ test('uses the JOHN CRM SVG in every site logo placement', () => {
 
   const logoSections = [
     appSource.slice(appSource.indexOf('function LoadingScreen'), appSource.indexOf('/* ----------------------------------- nav')),
-    appSource.slice(appSource.indexOf('function Nav()'), appSource.indexOf('/* ----------------------------- hero + dashboard')),
+    appSource.slice(appSource.indexOf('function Nav('), appSource.indexOf('/* ----------------------------- hero + dashboard')),
     appSource.slice(appSource.indexOf('function Footer()'), appSource.indexOf('/* ----------------------------------- app')),
   ];
 
