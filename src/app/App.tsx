@@ -29,24 +29,11 @@ import shotChat from '../assets/crm-chat.png';
 import shotAiContent from '../assets/crm-ai-content.png';
 import heroAscii from '../assets/hero-ascii.txt?raw';
 import johnCrmLogo from '../assets/johncrm.svg';
+import { prefersReducedMotion, useAsciiTextBulge } from '../lib/useAsciiTextBulge';
 
 const heroAsciiWithoutBackgroundDots = heroAscii.replaceAll('.', ' ');
-const HERO_ASCII_HOVER_GLYPHS = '@#%*+=-<>/\\';
-const HERO_ASCII_SCRAMBLE_RADIUS = 72;
-
-function createHeroAsciiHoverFrame(frame: number) {
-  return heroAsciiWithoutBackgroundDots.replace(/\S/g, (character, index) =>
-    (index + frame * 11) % 19 === 0
-      ? HERO_ASCII_HOVER_GLYPHS[(index * 7 + frame * 13) % HERO_ASCII_HOVER_GLYPHS.length]
-      : character,
-  );
-}
 
 /* ---------------------------------- hooks --------------------------------- */
-
-const prefersReducedMotion = () =>
-  typeof window !== 'undefined' &&
-  window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 function useInView<T extends HTMLElement>(threshold = 0.1) {
   const ref = useRef<T | null>(null);
@@ -589,83 +576,33 @@ function Nav({
 /* ----------------------------- hero + dashboard ---------------------------- */
 
 function HeroMockup() {
-  const asciiArtRef = useRef<HTMLPreElement>(null);
-  const [asciiHovered, setAsciiHovered] = useState(false);
-  const [asciiHoverFrame, setAsciiHoverFrame] = useState(0);
-  const [asciiPointer, setAsciiPointer] = useState({ x: 0, y: 0 });
-  const shouldScrambleAscii = asciiHovered && !prefersReducedMotion();
-
-  const updateAsciiPointer = (event: React.PointerEvent<HTMLPreElement>) => {
-    const bounds = event.currentTarget.getBoundingClientRect();
-    setAsciiPointer({
-      x: event.clientX - bounds.left,
-      y: event.clientY - bounds.top,
-    });
-  };
-
-  const handleAsciiPointerEnter = (event: React.PointerEvent<HTMLPreElement>) => {
-    updateAsciiPointer(event);
-    setAsciiHovered(true);
-  };
-
-  const handleAsciiFocus = () => {
-    const bounds = asciiArtRef.current?.getBoundingClientRect();
-    if (bounds) {
-      setAsciiPointer({ x: bounds.width / 2, y: bounds.height / 2 });
-    }
-    setAsciiHovered(true);
-  };
-
-  useEffect(() => {
-    if (!shouldScrambleAscii) {
-      setAsciiHoverFrame(0);
-      return;
-    }
-
-    const interval = window.setInterval(() => {
-      setAsciiHoverFrame((frame) => (frame + 1) % 8);
-    }, 80);
-    return () => window.clearInterval(interval);
-  }, [shouldScrambleAscii]);
-
-  const scrambleMask = `radial-gradient(circle ${HERO_ASCII_SCRAMBLE_RADIUS}px at ${asciiPointer.x}px ${asciiPointer.y}px, black 0%, black 52%, transparent 100%)`;
+  const { containerRef, preRef, children } = useAsciiTextBulge(
+    heroAsciiWithoutBackgroundDots,
+  );
   const asciiFont =
     'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace';
 
   return (
     <div className="relative mx-auto flex max-w-full justify-center overflow-hidden">
-      <div className="relative -translate-y-10 w-max max-w-none lg:-translate-y-14">
+      <div
+        ref={containerRef}
+        data-radius="0.18"
+        data-strength="0.45"
+        className="relative -translate-y-10 w-max max-w-none lg:-translate-y-14"
+      >
         <pre
-          ref={asciiArtRef}
+          ref={preRef}
           role="img"
           aria-label="ASCII art salesman holding a briefcase"
-          aria-description="Hover or focus the artwork to scan a small circle of scrambled characters."
+          aria-description="Move your cursor over the artwork or focus it to magnify it with a lens effect."
           tabIndex={0}
-          onPointerEnter={handleAsciiPointerEnter}
-          onPointerMove={updateAsciiPointer}
-          onPointerLeave={() => setAsciiHovered(false)}
-          onFocus={handleAsciiFocus}
-          onBlur={() => setAsciiHovered(false)}
           className="m-0 w-max max-w-none cursor-crosshair whitespace-pre text-left text-[clamp(5.5px,1.6vw,6.5px)] leading-none tracking-normal text-[#2A88AA] focus-visible:outline focus-visible:outline-1 focus-visible:outline-[#2A88AA]/50 focus-visible:outline-offset-4 lg:text-[clamp(7px,0.75vw,10px)]"
           style={{
             fontFamily: asciiFont,
           }}
         >
-          {heroAsciiWithoutBackgroundDots}
+          {children}
         </pre>
-        {shouldScrambleAscii && (
-          <pre
-            aria-hidden="true"
-            className="pointer-events-none absolute inset-0 m-0 w-full max-w-none whitespace-pre text-left text-[clamp(5.5px,1.6vw,6.5px)] leading-none tracking-normal text-[#2A88AA] lg:text-[clamp(7px,0.75vw,10px)]"
-            style={{
-              fontFamily: asciiFont,
-              maskImage: scrambleMask,
-              WebkitMaskImage: scrambleMask,
-            }}
-          >
-            {createHeroAsciiHoverFrame(asciiHoverFrame)}
-          </pre>
-        )}
       </div>
     </div>
   );
