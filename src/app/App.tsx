@@ -1630,7 +1630,7 @@ function PrivacyPolicyPage() {
   return (
     <div className="min-h-screen bg-[#F8F8F6] text-black">
       <header className="border-b border-black/8 bg-white">
-        <div className="mx-auto flex h-20 max-w-[85rem] items-center justify-between px-6 lg:px-10">
+        <div className="mx-auto flex h-20 max-w-6xl items-center justify-between px-6 lg:px-10">
           <a href="/" className="flex items-center" aria-label="JOHN CRM home">
             <img src={johnCrmLogo} alt="JOHN CRM" className="h-5 w-auto" />
           </a>
@@ -1638,7 +1638,7 @@ function PrivacyPolicyPage() {
             href="/"
             className="group inline-flex items-center gap-3 font-mono text-[10px] tracking-[0.25em] uppercase text-black/45 transition-colors hover:text-black"
           >
-            <span>Back to JOHN CRM</span>
+            <span className="hidden sm:inline">Back to JOHN CRM</span>
             <ArrowRight size={14} strokeWidth={1.5} className="transition-transform group-hover:translate-x-1" />
           </a>
         </div>
@@ -1646,7 +1646,7 @@ function PrivacyPolicyPage() {
 
       <main id="top">
         <section className="border-b border-black/8 bg-white" style={GRID_BG}>
-          <div className="mx-auto max-w-[85rem] px-6 py-24 lg:px-10 lg:py-32">
+          <div className="mx-auto max-w-6xl px-6 py-24 lg:px-10 lg:py-32">
             <SectionLabel>Legal / Privacy Policy</SectionLabel>
             <div className="mt-8 max-w-4xl">
               <h1 className="font-display text-6xl font-black uppercase leading-[0.88] tracking-[-0.035em] text-black md:text-8xl">
@@ -1663,7 +1663,7 @@ function PrivacyPolicyPage() {
           </div>
         </section>
 
-        <div className="mx-auto grid max-w-[85rem] gap-16 px-6 py-20 lg:grid-cols-[13rem_minmax(0,52rem)] lg:gap-24 lg:px-10 lg:py-28">
+        <div className="mx-auto grid max-w-6xl gap-16 px-6 py-20 lg:grid-cols-[13rem_minmax(0,52rem)] lg:gap-24 lg:px-10 lg:py-28">
           <aside className="hidden lg:block">
             <div className="sticky top-10">
               <SectionLabel>On this page</SectionLabel>
