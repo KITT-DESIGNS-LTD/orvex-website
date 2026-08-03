@@ -1,3 +1,75 @@
+# Terms of Service page
+
+Publish the ToS markdown at `/terms-of-service`, mirroring the Privacy Policy page. Approved
+decisions: fill every bracketed placeholder from the values the privacy page already uses and drop
+the "Status: DRAFT template" blockquote; share `LegalSection` between both pages; make `App()` a
+hook-free router.
+
+Full plan: `C:\Users\admin\.claude\plans\moonlit-jingling-eagle.md`
+
+## Tasks
+
+- [x] `tests/legal-pages.test.mjs` — new regression test (route wired, TOC ids match section ids in
+      order, cross-refs resolve, no unfilled placeholders or mojibake, shared primitive, hook-free router)
+- [x] `src/app/App.tsx` — `legal pages` block: `LEGAL_CONTACT_EMAIL` / `LEGAL_ADDRESS` /
+      `LegalSection` (renamed from the `PRIVACY_*` / `PrivacySection` originals, 39 tokens)
+- [x] `src/app/App.tsx` — extract `LandingPage()`; `App()` becomes a pure router via `currentPath()`
+- [x] `src/app/App.tsx` — `TERMS_NAV` (16 tuples) + `TermsOfServicePage()`
+- [x] `src/app/App.tsx` — route branch + `FOOTER_LINKS` Terms href + explicit `ariaLabel` field
+- [x] Verify: `npm run typecheck`, bare `node --test`, `npm run build`, browser checklist
+- [x] Rebuild `dist` (never `git add -A` — `node_modules/` is tracked)
+
+## Review
+
+**Files changed:** `src/app/App.tsx` (+230 net: `legal pages` block, 16-section
+`TermsOfServicePage`, `LandingPage` extraction, footer link), `tests/legal-pages.test.mjs` (new,
+6 tests), `dist/` (rebuilt).
+
+**Build/tests:** `npm run typecheck` clean; bare `node --test` 32/32 (26 existing + 6 new);
+`npm run build` clean, `dist/404.html` byte-identical to `dist/index.html`.
+
+**Router refactor proven behavior-preserving.** Captured a landing-page behavioral fingerprint
+(cold/warm loading screen, `johncrm-visited` flag, section ids, nav + footer hrefs, `<html lang>`,
+USD→AUD pricing, EN→CN copy, 4,848 ASCII glyph spans, console errors) before and after by stashing
+only `src/app/App.tsx`. The diff was **one line** — the intended `Terms|#top|Terms` →
+`Terms|/terms-of-service|Terms of Service`. Everything else byte-identical.
+
+**Browser verification** (Playwright, headless Chromium) — 42/42 against the dev server *and*
+again against `npm run preview` (the production bundle):
+
+| Check | Result |
+| --- | --- |
+| `/terms-of-service` + trailing-slash variant render 16 sections; title `Terms of Service — JOHN CRM` | pass |
+| 16 TOC links match section ids in order; no dead anchors; anchors land at exactly 32px (`scroll-mt-8`) | pass |
+| 3 in-page cross-refs (§6→Fees, §10→Acceptable use, §13→Customer Content + Acceptable use) jump correctly | pass |
+| §3 privacy link navigates; `/privacy-policy` still renders 14 sections (the `LegalSection` rename) | pass |
+| Footer Terms/Privacy hrefs + accessible names; logo and back-link return home | pass |
+| Landing unaffected: loading screen, pricing, contact, `<html lang>`, language selector | pass |
+| TOC hidden below `lg`; zero horizontal overflow at 375/768/900/1440px | pass |
+| No draft placeholders, no mojibake, real em-dashes, 3 `mailto:` links, no console errors | pass |
+
+**Anchor-landing note (not a defect):** the final TOC entry stops 454px short because the page is
+already at maximum scroll. `/privacy-policy` behaves the same — and worse, its last *two* entries
+are affected. Inherent to the shared layout, unchanged by this work.
+
+**Incidental fix:** the committed `dist/assets/johncrm-*.svg` did not match `src/assets/johncrm.svg`
+(pre-existing drift from before this branch). The rebuild re-syncs it — hence the SVG hash change in
+the `dist` diff, which is unrelated to the ToS page.
+
+**Verification gotchas (for future sessions):** `theme.css` sets `scroll-behavior: smooth`, so
+anchor assertions must poll until `scrollY` settles rather than using a fixed wait; `LoadingScreen`
+calls `onDone` at **3700ms**, so any landing assertion must wait past that; dropdown options use
+`role="menuitemradio"`, not `option`/`menuitem`; and `innerText` returns CSS-uppercased text for the
+display headings.
+
+**Out of scope (flagged):** the contact form's consent line still reads "By submitting you agree to
+our privacy policy" (`App.tsx:1526-1534`). Extending it to cover the Terms changes what users are
+legally agreeing to — left for an explicit decision.
+
+# ASCII Portrait — Cursor Bulge Effect
+
+## Phase 2 — Per-character DOM implementation (replaces WebGL)
+
 # ASCII Portrait — Cursor Bulge Effect
 
 ## Phase 2 — Per-character DOM implementation (replaces WebGL)
